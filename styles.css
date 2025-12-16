@@ -1,0 +1,522 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap');
+
+:root {
+    --accent-orange: #fd6036;
+    --accent-purple: #8080c6;
+    --accent-pink: #d85888;
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    color: #2d3436;
+    overflow: hidden;
+    /* Strict no scroll */
+    height: 100vh;
+    width: 100vw;
+    background: #f8fafc;
+}
+
+/* Ambient Background Animation */
+.ambient-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    filter: blur(80px);
+    opacity: 0.6;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    animation: float 10s infinite ease-in-out;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, #ffd1c1 0%, rgba(255, 255, 255, 0) 70%);
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, #e0e0ff 0%, rgba(255, 255, 255, 0) 70%);
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    top: 40%;
+    left: 40%;
+    width: 40vw;
+    height: 40vw;
+    background: radial-gradient(circle, #ffe0ec 0%, rgba(255, 255, 255, 0) 70%);
+    animation-delay: -2s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+/* Bento Grid System */
+.bento-container {
+    perspective: 1000px;
+}
+
+.grid-wrapper {
+    display: grid;
+    /* Layout: 3 columns. Profile/About take 2, Tech takes 1 vertical sidebar */
+    grid-template-columns: 1.5fr 1.5fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 750px;
+
+    /* Grid Areas */
+    grid-template-areas:
+        "profile profile tech"
+        "about   about   tech";
+}
+
+/* Card General Styles */
+.bento-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.bento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+    border-color: #fff;
+    z-index: 2;
+}
+
+/* Area Mapping & Specific Fixes */
+.profile-card {
+    grid-area: profile;
+    justify-content: center;
+    gap: 1rem;
+    /* Reduced gap since socials are here */
+}
+
+.about-visual-card {
+    grid-area: about;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.about-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.visual-content {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.floating-illustration-small {
+    max-width: 100%;
+    max-height: 220px;
+    width: auto;
+    object-fit: contain;
+    animation: hover-illustration 6s ease-in-out infinite;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+}
+
+.tech-card {
+    grid-area: tech;
+    justify-content: flex-start;
+    padding-top: 2rem;
+}
+
+/* Card Content: Profile */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 160px;
+    /* Slightly smaller to fit everything */
+    height: 160px;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #10B981;
+    border: 3px solid #fff;
+}
+
+.bio-short {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 1.5rem;
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.accent-text {
+    font-weight: 600;
+    color: var(--accent-purple);
+    background: rgba(128, 128, 198, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Card Content: Social (Now inside Profile) */
+.social-icons-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.social-link {
+    transition: transform 0.2s;
+}
+
+.social-link:hover {
+    transform: translateY(-3px);
+}
+
+.icon-box {
+    width: 42px;
+    height: 42px;
+    /* Smaller icons inside profile */
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.social-link:hover .icon-box {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    background: #fff;
+}
+
+/* Card Content: About */
+.section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #9CA3AF;
+    margin-bottom: 0.8rem;
+}
+
+.link-highlight {
+    color: var(--accent-orange);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+}
+
+.link-highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--accent-orange);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.link-highlight:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Card Content: Tech */
+.tech-groups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+}
+
+.tech-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tech-category-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9CA3AF;
+    /* Gray-400 */
+    margin-left: 0.2rem;
+}
+
+.tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: flex-start;
+}
+
+.tech-pill {
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, background 0.2s;
+    cursor: default;
+}
+
+.tech-pill:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.tech-pill.purple {
+    background: rgba(128, 128, 198, 0.1);
+    color: var(--accent-purple);
+}
+
+.tech-pill.orange {
+    background: rgba(253, 96, 54, 0.1);
+    color: var(--accent-orange);
+}
+
+.tech-pill.gray {
+    background: #fff;
+    color: #4B5563;
+}
+
+.tech-footer-note {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+@keyframes hover-illustration {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* ===== Responsive Mobile (Scrollable) ===== */
+@media (max-width: 768px) {
+
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-y: auto !important;
+        /* Force vertical scroll */
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scroll on iOS */
+    }
+
+    .ambient-bg {
+        position: fixed;
+        height: 100vh;
+    }
+
+    /* Fix background to viewport */
+
+    .bento-container {
+        padding: 1rem;
+        height: auto !important;
+        min-height: 100vh;
+        align-items: flex-start;
+        overflow: visible;
+        display: flex;
+        /* Maintain flex for layout */
+    }
+
+    .grid-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        max-height: none;
+        gap: 1.5rem;
+        padding-bottom: 3rem;
+        /* Extra padding for bottom scroll space */
+    }
+
+    .profile-card {
+        flex: 0 0 auto;
+        padding: 1.5rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        text-align: center;
+    }
+
+    .image-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .bio-short {
+        display: block;
+        border: none;
+        padding-top: 1rem;
+    }
+
+    .about-visual-card {
+        flex: 0 0 auto;
+        flex-direction: column-reverse;
+        /* Visual First, Text Second */
+        gap: 1rem;
+    }
+
+    .about-content {
+        text-align: center;
+    }
+
+    .visual-content {
+        flex: 0 0 auto;
+        height: 140px;
+        /* Larger visual on mobile */
+        display: flex;
+        justify-content: center;
+    }
+
+    .floating-illustration-small {
+        max-height: 100%;
+        max-width: 80%;
+    }
+
+    /* Tech Card Mobile Updates */
+    .tech-card {
+        flex: 0 0 auto;
+        max-height: none;
+        height: auto;
+        padding-bottom: 2rem;
+        order: 3;
+        /* Ensure it stays at bottom or ordered logic */
+    }
+
+    .tech-groups-container {
+        gap: 1.5rem;
+    }
+
+    .tech-list {
+        justify-content: center;
+        /* Center pills on mobile */
+    }
+
+    h1 {
+        font-size: 1.75rem !important;
+    }
+
+    .section-title {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    /* Remove old tech-grid mobile styles */
+    .social-icons-wrapper {
+        justify-content: center;
+        gap: 1.25rem;
+        margin-top: 0.8rem;
+    }
+
+    .icon-box {
+        width: 40px;
+        height: 40px;
+    }
+}
