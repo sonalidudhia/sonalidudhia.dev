@@ -1,12 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('%c System Online ', 'background: #222; color: #bada55');
+
     // Select all cards
     const cards = document.querySelectorAll('.bento-card');
 
     // Add initial state for animation
     cards.forEach(card => {
         card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        card.style.transform = 'translateY(10px)';
+        card.style.transition = 'opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    });
+
+    // Theme Toggle Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+
+    // Check local storage or system preference
+    const userTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    const enableDarkMode = () => {
+        document.body.classList.add('dark-mode');
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+        localStorage.setItem('theme', 'dark');
+    };
+
+    const enableLightMode = () => {
+        document.body.classList.remove('dark-mode');
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+        localStorage.setItem('theme', 'light');
+    };
+
+    if (userTheme === 'dark' || (!userTheme && systemTheme)) {
+        enableDarkMode();
+    } else {
+        enableLightMode();
+    }
+
+    themeToggle.addEventListener('click', () => {
+        if (document.body.classList.contains('dark-mode')) {
+            enableLightMode();
+        } else {
+            enableDarkMode();
+        }
     });
 
     // Staggered Reveal
@@ -14,38 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
-        }, 100 * index); // 100ms delay between each card
+        }, 80 * index); // Faster, more technical reveal
     });
-
-    // Optional: Interactive Tilt Effect for Desktop
-    if (window.matchMedia('(min-width: 769px)').matches) {
-        document.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-
-            cards.forEach(card => {
-                const sensitivity = 0.015;
-                const x = (clientX - centerX) * sensitivity;
-                const y = (clientY - centerY) * sensitivity;
-
-                // varied movement for depth
-                const depth = Math.random() * 0.5 + 0.5;
-
-                // Apply subtle parallax to cards
-                // Note: We use the existing transform transition, so it might be smooth or laggy depending on browser.
-                // For high perf, requestAnimationFrame is better, but for this simple effect:
-                // We won't apply it to everything to avoid conflict with hover.
-                // Actually, let's just animate the blobs slightly more associated with mouse
-            });
-
-            const blobs = document.querySelectorAll('.blob');
-            blobs.forEach((blob, i) => {
-                const speed = (i + 1) * 0.02;
-                const x = (clientX - centerX) * speed;
-                const y = (clientY - centerY) * speed;
-                blob.style.transform = `translate(${x}px, ${y}px)`;
-            });
-        });
-    }
 });
