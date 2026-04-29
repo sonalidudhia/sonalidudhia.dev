@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonali Dudhia - Resume | Senior Full Stack Developer</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Sonali Dudhia - Senior Full Stack Developer & Team Lead. 6+ years of experience in Laravel, PHP, and modern web technologies.">
+    <meta name="keywords" content="senior developer, full stack, Laravel, PHP, team lead, portfolio">
+    <meta name="author" content="Sonali Dudhia">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            opacity: 0.3;
+            filter: blur(60px);
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+            top: -50px;
+            right: -100px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            bottom: 100px;
+            left: -50px;
+            animation: float 9s ease-in-out infinite;
+        }
+
+        .blob-3 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
+            top: 50%;
+            left: 50%;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(30px);
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 3px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Blog Button -->
+    <a href="blog.html"
+        class="fixed top-4 left-4 md:top-8 md:left-8 z-50 inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-white/80 hover:bg-white text-gray-800 rounded-lg font-medium text-sm transition-all duration-200 backdrop-blur-sm border border-gray-200 hover:border-blue-300 shadow-md hover:shadow-lg group"
+        aria-label="Read blog posts" title="Read blog posts">
+        <svg class="w-4 h-4 md:w-5 md:h-5 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v6h6"></path>
+        </svg>
+        <span class="hidden sm:inline">Blog</span>
+    </a>
+
+    <!-- Home Button -->
+    <a href="index.html"
+        class="fixed top-4 right-4 md:top-8 md:right-8 z-50 inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-white/80 hover:bg-white text-gray-800 rounded-lg font-medium text-sm transition-all duration-200 backdrop-blur-sm border border-gray-200 hover:border-orange-300 shadow-md hover:shadow-lg group"
+        aria-label="Back to Home" title="Back to Home">
+        <svg class="w-4 h-4 md:w-5 md:h-5 group-hover:text-orange-500 transition-colors" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+            </path>
+        </svg>
+        <span class="hidden sm:inline">Home</span>
+    </a>
+
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 min-h-screen">
+
+        <!-- Header / Hero Section -->
+        <header class="pt-12 md:pt-20 pb-8 md:pb-12 px-4 md:px-8">
+            <div class="max-w-5xl mx-auto flex flex-col items-center gap-6">
+
+                <!-- Profile Image -->
+                <div class="flex-shrink-0">
+                    <img src="assets/profile.jpeg" alt="Sonali Dudhia"
+                        class="profile-img w-32 h-32 md:w-40 md:h-40 shadow-lg">
+                </div>
+
+                <!-- Text Content -->
+                <div class="text-center flex-1">
+                    <!-- Name -->
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2 tracking-tight">
+                        Sonali Dudhia
+                    </h1>
+
+                    <!-- Title -->
+                    <h2
+                        class="text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 mb-4">
+                        Senior Full Stack Developer & Team Lead
+                    </h2>
+
+
+                </div>
+
+            </div>
+        </header>
+
+        <main class="px-4 md:px-8 pb-24">
+            <div class="max-w-4xl mx-auto">
+
+                <!-- Professional Summary -->
+                <section class="mb-12">
+                    <h3 class="section-title">Professional Summary</h3>
+                    <div class="glass p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="text-gray-700 leading-relaxed text-lg">
+                            Results-driven Full Stack Developer with strong leadership experience, adept at guiding
+                            cross-functional teams through
+                            complete project lifecycles. Proven ability to manage client communications, deliver
+                            scalable solutions, and ensure timely
+                            delivery of high-quality code. Skilled in PHP frameworks (Laravel, CakePHP, Zend),
+                            JavaScript (Vue.js, React, Node.js), and
+                            CMS platforms like WordPress and Shopify. Experienced with RESTful and GraphQL APIs,
+                            real-time streaming integrations,
+                            and building cloud-based solutions using AWS and Docker. Proficient in data handling with
+                            MySQL and MongoDB, version
+                            control with Git, and frontend technologies including Tailwind, HTML5, and CSS3. Known for
+                            effective problem-solving,
+                            team mentorship, and adaptability to new technologies. Active contributor to the Laravel
+                            open-source community with hands-on experience in testing (PHPUnit, PEST) and project
+                            management tools such as Trello and Asana.
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

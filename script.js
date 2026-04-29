@@ -22,15 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const enableDarkMode = () => {
         document.body.classList.add('dark-mode');
-        sunIcon.style.display = 'block';
-        moonIcon.style.display = 'none';
+        if (sunIcon) sunIcon.style.display = 'block';
+        if (moonIcon) moonIcon.style.display = 'none';
         localStorage.setItem('theme', 'dark');
     };
 
     const enableLightMode = () => {
         document.body.classList.remove('dark-mode');
-        sunIcon.style.display = 'none';
-        moonIcon.style.display = 'block';
+        if (sunIcon) sunIcon.style.display = 'none';
+        if (moonIcon) moonIcon.style.display = 'block';
         localStorage.setItem('theme', 'light');
     };
 
@@ -40,13 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
         enableLightMode();
     }
 
-    themeToggle.addEventListener('click', () => {
-        if (document.body.classList.contains('dark-mode')) {
-            enableLightMode();
-        } else {
-            enableDarkMode();
-        }
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            if (document.body.classList.contains('dark-mode')) {
+                enableLightMode();
+            } else {
+                enableDarkMode();
+            }
+        });
+    }
 
     // Staggered Reveal
     cards.forEach((card, index) => {

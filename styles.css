@@ -40,7 +40,7 @@ body.dark-mode {
 .theme-toggle {
     position: fixed;
     top: 1.5rem;
-    right: 8.5rem;
+    right: 16rem;
     /* Position to the left of source button */
     z-index: 50;
     background: var(--card-bg);
@@ -508,6 +508,297 @@ body.dark-mode .social-link[aria-label="LinkedIn"]:hover {
     box-sizing: border-box;
 }
 
+.blog-btn {
+    position: fixed;
+    top: 1.5rem;
+    right: 8.8rem;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    height: 36px;
+    padding: 0 0.65rem;
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    font-family: var(--code-font);
+    font-size: 0.75rem;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.blog-btn:hover {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border-color: var(--tech-blue);
+}
+
+.blog-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.blog-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 7rem 1rem 3rem;
+}
+
+body.blog-theme {
+    --card-bg: #ffffff;
+    --pill-bg: #ffffff;
+    --card-border: rgba(15, 23, 42, 0.08);
+    --card-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    background-color: var(--bg-color);
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center center;
+}
+
+body.blog-theme.dark-mode {
+    --card-bg: #0f172a;
+    --pill-bg: #111827;
+    --card-border: rgba(148, 163, 184, 0.14);
+    --card-shadow: 0 24px 50px rgba(2, 6, 23, 0.4);
+    background-color: var(--bg-color);
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center center;
+}
+
+.top-controls {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.top-controls .theme-toggle,
+.top-controls .blog-btn,
+.top-controls .source-btn {
+    position: static;
+    top: auto;
+    right: auto;
+}
+
+.top-controls .theme-toggle {
+    flex: 0 0 auto;
+}
+
+.blog-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--tech-blue);
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+}
+
+.blog-kicker {
+    font-family: var(--code-font);
+    color: var(--tech-blue);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.6rem;
+}
+
+.blog-title {
+    font-size: clamp(1.8rem, 3.3vw, 2.7rem);
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+}
+
+.blog-subtitle {
+    color: var(--text-secondary);
+    max-width: 75ch;
+    line-height: 1.6;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.blog-spotlight,
+.blog-list {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.blog-spotlight {
+    border-top: 3px solid var(--tech-orange);
+}
+
+.blog-list {
+    border-top: 3px solid var(--tech-green);
+}
+
+.blog-section-title {
+    font-family: var(--code-font);
+    color: #9ca3af;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+
+.post-card {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--card-border);
+    background: var(--pill-bg);
+    border-radius: 6px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.post-card + .post-card {
+    margin-top: 0.8rem;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--tech-blue);
+}
+
+.post-meta {
+    font-family: var(--code-font);
+    color: #9ca3af;
+    font-size: 0.7rem;
+    margin-bottom: 0.45rem;
+}
+
+.post-card h3 {
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    margin-bottom: 0.45rem;
+}
+
+.post-card p {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.post-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+}
+
+.post-tag {
+    font-family: var(--code-font);
+    color: var(--tech-purple);
+    background: rgba(139, 92, 246, 0.08);
+    font-size: 0.67rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+}
+
+.blog-article {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 7rem 1rem 4rem;
+}
+
+.article-shell {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--tech-orange);
+    border-radius: 6px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.article-header {
+    margin-bottom: 1.6rem;
+}
+
+.article-header h1 {
+    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    line-height: 1.15;
+    margin: 0.45rem 0;
+}
+
+.article-body p {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+.article-body h2 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin: 1.8rem 0 0.8rem;
+}
+
+.article-body ul {
+    margin: 0 0 1.2rem 1.2rem;
+    color: var(--text-secondary);
+}
+
+.article-body li {
+    margin-bottom: 0.5rem;
+}
+
+.article-body pre {
+    background: rgba(15, 23, 42, 0.95);
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.7rem 0 1.2rem;
+    overflow-x: auto;
+}
+
+.article-body code {
+    font-family: var(--code-font);
+    font-size: 0.85rem;
+}
+
+.article-body table {
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--pill-bg);
+}
+
+body.dark-mode .article-body table {
+    background: rgba(2, 6, 23, 0.55);
+}
+
+.article-cta {
+    margin-top: 2rem;
+    border-top: 1px dashed var(--card-border);
+    padding-top: 1rem;
+}
+
+.article-cta a {
+    color: var(--tech-blue);
+    text-decoration: none;
+}
+
+.article-cta a:hover {
+    text-decoration: underline;
+}
+
 .source-btn:hover {
     background: var(--bg-color);
     color: var(--text-primary);
@@ -606,6 +897,41 @@ body.dark-mode .social-link[aria-label="LinkedIn"]:hover {
 
     .bento-card {
         padding: 1.5rem;
+    }
+
+    .blog-btn {
+        padding: 0 0.55rem;
+    }
+
+    .top-controls {
+        top: 1rem;
+        right: 1rem;
+        gap: 0.35rem;
+    }
+
+    .source-btn {
+        padding: 0 0.6rem;
+    }
+
+    .source-btn span,
+    .blog-btn span {
+        display: none;
+    }
+
+    .blog-main,
+    .blog-article {
+        padding-top: 6rem;
+    }
+
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .blog-hero,
+    .blog-spotlight,
+    .blog-list,
+    .article-shell {
+        padding: 1.2rem;
     }
 
     /* Adjust tech pills for wrap */

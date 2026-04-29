@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sonali Dudhia Engineering Blog</title>
+    <link>https://sonalidudhia.dev/blog.html</link>
+    <description>Practical backend, Laravel, and web architecture notes.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 29 Apr 2026 12:00:00 GMT</lastBuildDate>
+    <atom:link href="https://sonalidudhia.dev/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin</title>
+      <link>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</link>
+      <guid>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</guid>
+      <pubDate>Wed, 29 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Scan, connect, and track BLE devices in Laravel and Livewire using sonalidudhia/nativephp-ble-tracking.</description>
+    </item>
+  </channel>
+</rss>
