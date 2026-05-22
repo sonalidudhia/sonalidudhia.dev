@@ -751,8 +751,10 @@ body.blog-theme.dark-mode {
 }
 
 .article-body ul {
-    margin: 0 0 1.2rem 1.2rem;
+    margin: 0 0 1.2rem 1.5rem;
     color: var(--text-secondary);
+    list-style: disc;
+    padding-left: 1.5rem;
 }
 
 .article-body li {
