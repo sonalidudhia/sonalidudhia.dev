@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension | Sonali Dudhia</title>
+
+    <meta name="description"
+        content="A technical walkthrough of connecting a Laravel app to Shopify using webhooks, Admin API updates, and a Thank you page extension that redirects into a Laravel workflow.">
+    <meta name="keywords"
+        content="Laravel Shopify, Shopify webhooks Laravel, Shopify thank you page extension, Shopify custom app, Shopify Admin API Laravel">
+    <meta name="author" content="Sonali Dudhia">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url"
+        content="https://sonalidudhia.dev/blog/connecting-laravel-to-shopify-webhooks-and-thank-you-page-extension.html">
+    <meta property="og:title" content="Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension">
+    <meta property="og:description"
+        content="How I used Laravel, Shopify webhooks, and a Thank you page extension to build a post-purchase workflow around order processing.">
+    <meta property="og:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url"
+        content="https://sonalidudhia.dev/blog/connecting-laravel-to-shopify-webhooks-and-thank-you-page-extension.html">
+    <meta name="twitter:title" content="Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension">
+    <meta name="twitter:description"
+        content="Technical notes on syncing Shopify orders to Laravel, handling webhooks safely, and adding a Thank you page extension that feeds into a Laravel form.">
+    <meta name="twitter:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
+
+    <meta name="theme-color" content="#f97316">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="canonical"
+        href="https://sonalidudhia.dev/blog/connecting-laravel-to-shopify-webhooks-and-thank-you-page-extension.html">
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension",
+            "datePublished": "2026-05-28",
+            "dateModified": "2026-05-28",
+            "author": {
+                "@type": "Person",
+                "name": "Sonali Dudhia"
+            },
+            "publisher": {
+                "@type": "Person",
+                "name": "Sonali Dudhia"
+            },
+            "description": "A technical walkthrough of connecting a Laravel app to Shopify using webhooks, Admin API updates, and a Thank you page extension that redirects into a Laravel workflow.",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://sonalidudhia.dev/blog/connecting-laravel-to-shopify-webhooks-and-thank-you-page-extension.html"
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="blog-theme">
+    <div class="top-controls">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+            <svg class="sun-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+            <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+
+        <a href="../blog.html" class="blog-btn" aria-label="Back to blog list">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span>blog</span>
+        </a>
+
+        <a href="../index.html" class="source-btn" aria-label="Back to home">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                </path>
+            </svg>
+            <span>home</span>
+        </a>
+    </div>
+
+    <main class="blog-article">
+        <article class="article-shell">
+            <header class="article-header">
+                <p class="blog-kicker">Laravel x Shopify</p>
+                <h1>Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension</h1>
+                <p class="post-meta">By Sonali Dudhia • May 28, 2026 • 10 min read</p>
+                <div class="post-tag-row">
+                    <span class="post-tag">Laravel</span>
+                    <span class="post-tag">Shopify</span>
+                    <span class="post-tag">Webhooks</span>
+                    <span class="post-tag">Checkout UI</span>
+                </div>
+            </header>
+
+            <section class="article-body">
+                <p>
+                    In one project, I worked on a Shopify integration where the store needed to trigger custom
+                    post-purchase logic inside a Laravel application. The app was connected to the Shopify store,
+                    listened to webhook events, updated order-related data, and exposed a custom flow from the Thank
+                    you page back into Laravel.
+                </p>
+                <p>
+                    The project started as a private app setup. Today, you would usually describe this kind of build
+                    as a custom app, but the core architecture stays the same: Shopify owns the commerce flow, and
+                    Laravel handles the business logic that sits around it.
+                </p>
+
+                <h2>What the Integration Needed to Do</h2>
+                <p>
+                    The requirements were straightforward, but the flow had a few moving parts:
+                </p>
+                <ul>
+                    <li>Connect the app to a Shopify store securely.</li>
+                    <li>Receive webhook events whenever order activity changed.</li>
+                    <li>Update Laravel-side records and trigger internal workflows.</li>
+                    <li>Allow post-purchase data collection after successful payment.</li>
+                    <li>Send the customer from the Thank you page into a Laravel-managed form.</li>
+                </ul>
+                <p>
+                    Instead of trying to overload checkout itself, I kept the payment flow clean and handled the extra
+                    business process after the order was already created.
+                </p>
+
+                <h2>High-Level Architecture</h2>
+                <pre><code>Shopify Store
+    |
+    |-- Webhooks (orders/create, orders/updated, etc.)
+    v
+Laravel Webhook Endpoint
+    |
+    |-- Validate HMAC
+    |-- Persist webhook payload
+    |-- Dispatch queued job
+    v
+Laravel Business Logic
+    |
+    |-- Update local records
+    |-- Call Shopify Admin API if needed
+    v
+Thank you Page Extension
+    |
+    |-- Customer clicks custom link
+    v
+Laravel Form
+    |
+    |-- Save response
+    |-- Continue internal workflow</code></pre>
+
+                <h2>Receiving Shopify Webhooks in Laravel</h2>
+                <p>
+                    Webhooks were the backbone of the integration. Whenever an order changed, Shopify notified the
+                    Laravel app. The first thing I cared about here was verifying the request properly before touching
+                    the payload.
+                </p>
+
+                <p>A simple route looked like this:</p>
+                <pre><code>use App\Http\Controllers\ShopifyWebhookController;
+use Illuminate\Support\Facades\Route;
+
+Route::post('/webhooks/shopify/orders', ShopifyWebhookController::class);</code></pre>
+
+                <p>
+                    The controller used the raw request body and the <code>X-Shopify-Hmac-Sha256</code> header to
+                    verify that the webhook was genuinely sent by Shopify:
+                </p>
+                <p>First, verify the signature:</p>
+                <pre><code>$rawBody = $request-&gt;getContent();
+$receivedHmac = $request-&gt;header('X-Shopify-Hmac-Sha256', '');
+
+$computedHmac = base64_encode(
+    hash_hmac('sha256', $rawBody, config('services.shopify.webhook_secret'), true)
+);
+
+if (! hash_equals($computedHmac, $receivedHmac)) {
+    abort(401, 'Invalid signature.');
+}</code></pre>
+
+                <p>Then dispatch the payload into a queue:</p>
+                <pre><code>ProcessShopifyOrderWebhook::dispatch(
+    $request-&gt;header('X-Shopify-Topic'),
+    $request-&gt;header('X-Shopify-Shop-Domain'),
+    $request-&gt;json()-&gt;all()
+);
+
+return response()-&gt;json(['ok' =&gt; true]);</code></pre>
+
+                <p>
+                    The main goal was to acknowledge fast and move real work into a queue. That kept the webhook
+                    endpoint responsive and safer under retries.
+                </p>
+
+                <h2>Processing the Webhook Asynchronously</h2>
+                <p>
+                    Once the payload was trusted, I handed it to a job. This is where I mapped Shopify data into the
+                    Laravel domain and triggered the project-specific logic.
+                </p>
+                <p>The job constructor keeps the webhook context small and explicit:</p>
+                <pre><code>public function __construct(
+    public string $topic,
+    public string $shopDomain,
+    public array $payload
+) {}</code></pre>
+
+                <p>Inside <code>handle()</code>, I sync the order into Laravel:</p>
+                <pre><code>$order = ShopifyOrder::updateOrCreate(
+    ['shopify_order_id' =&gt; $this-&gt;payload['id']],
+    [
+        'shop_domain' =&gt; $this-&gt;shopDomain,
+        'order_number' =&gt; $this-&gt;payload['order_number'] ?? null,
+        'email' =&gt; $this-&gt;payload['email'] ?? null,
+        'financial_status' =&gt; $this-&gt;payload['financial_status'] ?? null,
+        'payload' =&gt; $this-&gt;payload,
+    ]
+);</code></pre>
+
+                <p>After that, I can trigger Shopify-side updates only when needed:</p>
+                <pre><code>if ($this-&gt;topic === 'orders/create') {
+    $shopify-&gt;tagOrder(
+        $this-&gt;shopDomain,
+        $order-&gt;shopify_graphql_id,
+        ['post-purchase-pending']
+    );
+}</code></pre>
+
+                <p>
+                    In the real project, the exact logic depended on the order state and what the Laravel app needed
+                    to do next. The important part was that Shopify events became triggers for application workflows,
+                    instead of data that someone had to check manually.
+                </p>
+
+                <h2>Updating the Shopify Order from Laravel</h2>
+                <p>
+                    Sometimes receiving the webhook was only half the job. After processing the event, the Laravel app
+                    also needed to update something back in Shopify, such as order tags, notes, or a custom status
+                    marker.
+                </p>
+                <p>
+                    I usually keep that logic behind a small service so controllers and jobs stay readable:
+                </p>
+                <p>A small GraphQL mutation is enough for tagging:</p>
+                <pre><code>$query = &lt;&lt;&lt;GRAPHQL
+mutation AddTags($id: ID!, $tags: [String!]!) {
+  tagsAdd(id: $id, tags: $tags) {
+    node {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+GRAPHQL;</code></pre>
+
+                <p>Then the service can send the request with the store token:</p>
+                <pre><code>return Http::withHeaders([
+    'X-Shopify-Access-Token' =&gt; $this-&gt;tokenFor($shopDomain),
+])-&gt;post("https://{$shopDomain}/admin/api/2025-10/graphql.json", [
+    'query' =&gt; $query,
+    'variables' =&gt; [
+        'id' =&gt; $orderGid,
+        'tags' =&gt; $tags,
+    ],
+])-&gt;json();</code></pre>
+
+                <p>
+                    If the project requires true order editing rather than simple metadata updates, the same pattern
+                    applies: receive the webhook, decide the business action in Laravel, then call the appropriate
+                    Shopify Admin API mutation from a service class.
+                </p>
+
+                <h2>Adding a Thank You Page Extension</h2>
+                <p>
+                    The second half of the project was the customer-facing part. After a successful payment, I needed
+                    to show a custom link on the Thank you page that would send the customer into a Laravel form.
+                </p>
+                <p>
+                    That extension acted as the bridge between Shopify checkout completion and the Laravel workflow.
+                </p>
+
+                <p>First, register the Thank you page extension target:</p>
+                <pre><code>import {
+  reactExtension,
+  BlockStack,
+  Link,
+  Text,
+} from "@shopify/ui-extensions-react/checkout";
+
+export default reactExtension(
+  "purchase.thank-you.block.render",
+  () =&gt; &lt;Extension /&gt;
+);</code></pre>
+
+                <p>Then build the Laravel redirect URL from the order context:</p>
+                <pre><code>const orderId = "gid://shopify/Order/1234567890";
+const shop = "example-store.myshopify.com";
+
+const formUrl =
+  `https://app.example.com/shopify/post-purchase?shop=${encodeURIComponent(shop)}&order=${encodeURIComponent(orderId)}`;</code></pre>
+
+                <p>Finally, render the call to action on the page:</p>
+                <pre><code>return (
+  &lt;BlockStack spacing="tight"&gt;
+    &lt;Text emphasis="bold"&gt;One more step&lt;/Text&gt;
+    &lt;Link to={formUrl}&gt;Complete the follow-up form&lt;/Link&gt;
+  &lt;/BlockStack&gt;
+);</code></pre>
+
+                <p>
+                    The UI itself was small, but it unlocked a much larger workflow. It let me collect data after
+                    payment, without disrupting the checkout process.
+                </p>
+
+                <h2>Handling the Laravel Form Submission</h2>
+                <p>
+                    Once the customer clicked the link, Laravel took over. I used a normal route and controller to
+                    show the form and then store the response.
+                </p>
+                <pre><code>use App\Http\Controllers\PostPurchaseFormController;
+
+Route::get('/shopify/post-purchase', [PostPurchaseFormController::class, 'show']);
+Route::post('/shopify/post-purchase', [PostPurchaseFormController::class, 'store']);</code></pre>
+
+                <p>The GET action only needs to forward the order context into the view:</p>
+                <pre><code>return view('shopify.post-purchase', [
+    'shop' =&gt; $request-&gt;string('shop'),
+    'order' =&gt; $request-&gt;string('order'),
+]);</code></pre>
+
+                <p>The POST action validates and stores the response:</p>
+                <pre><code>$data = $request-&gt;validate([
+    'shop' =&gt; ['required', 'string'],
+    'order' =&gt; ['required', 'string'],
+    'response' =&gt; ['required', 'string', 'max:5000'],
+]);
+
+PostPurchaseResponse::create($data);
+
+return redirect()-&gt;route('thank-you.local');</code></pre>
+
+                <p>
+                    In this setup, the Laravel app became the source of truth for the extra information the business
+                    needed after checkout.
+                </p>
+
+                <h2>Things That Mattered in Production</h2>
+                <ul>
+                    <li>Verify webhook signatures using the raw body, not parsed JSON.</li>
+                    <li>Process webhooks asynchronously to avoid timeouts and duplicate side effects.</li>
+                    <li>Store the Shopify order ID and shop domain consistently across tables.</li>
+                    <li>Protect the external form flow so only valid post-purchase requests are accepted.</li>
+                    <li>Keep Shopify-specific API calls behind a service layer.</li>
+                </ul>
+
+                <h2>Why This Pattern Worked Well</h2>
+                <p>
+                    What I liked about this architecture is that each system stayed focused on what it does best.
+                    Shopify handled checkout and order creation. Laravel handled custom workflows, validation,
+                    persistence, and follow-up processing.
+                </p>
+                <p>
+                    That separation made the solution easier to maintain and gave the project room to grow. Adding
+                    more webhook topics, more internal workflow steps, or more post-purchase screens on the Laravel
+                    side was straightforward once the integration foundation was in place.
+                </p>
+
+                <h2>Final Thoughts</h2>
+                <p>
+                    If you need more than the default Shopify admin flow, Laravel works very well as the backend layer
+                    around a Shopify store. Webhooks give you reliable event triggers, the Admin API lets you push
+                    changes back into Shopify, and a Thank you page extension gives you a clean post-purchase entry
+                    point into your own application.
+                </p>
+                <p>
+                    For this project, that combination made it possible to connect store events, customer actions, and
+                    Laravel business logic into one consistent flow.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
