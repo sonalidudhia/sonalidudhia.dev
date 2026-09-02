@@ -5,8 +5,16 @@
     <link>https://sonalidudhia.dev/blog.html</link>
     <description>Practical backend, Laravel, and web architecture notes.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 May 2026 09:24:20 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 02 Sep 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://sonalidudhia.dev/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin</title>
+      <link>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</link>
+      <guid>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</guid>
+      <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Scanning, connecting to, and tracking Bluetooth Low Energy devices from Laravel and Livewire with the BLE plugin for NativePHP Mobile.</description>
+    </item>
 
     <item>
       <title>Connecting Laravel to Shopify with Webhooks and a Thank You Page Extension</title>
@@ -16,12 +24,5 @@
       <description>Technical walkthrough of a Laravel and Shopify integration using webhooks, Admin API updates, and a Thank you page extension linked to a Laravel form.</description>
     </item>
 
-    <item>
-      <title>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin</title>
-      <link>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</link>
-      <guid>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</guid>
-      <pubDate>Wed, 29 Apr 2026 00:00:00 GMT</pubDate>
-      <description>Scan, connect, and track BLE devices in Laravel and Livewire using sonalidudhia/nativephp-ble-tracking.</description>
-    </item>
   </channel>
 </rss>

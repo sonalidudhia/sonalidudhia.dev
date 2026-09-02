@@ -7,7 +7,7 @@
     <title>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin | Sonali Dudhia</title>
 
     <meta name="description"
-        content="Learn how to scan, connect, and track Bluetooth Low Energy devices in Laravel using the NativePHP BLE Tracking Plugin, with Livewire events and real-time RSSI updates.">
+        content="How the BLE plugin for NativePHP Mobile lets a Laravel app scan for, connect to, and track Bluetooth Low Energy devices using native events and RSSI, with no Swift or Kotlin.">
     <meta name="keywords"
         content="NativePHP BLE plugin, Laravel BLE, Bluetooth Low Energy Laravel, Livewire BLE tracking, RxAndroidBle, CoreBluetooth">
     <meta name="author" content="Sonali Dudhia">
@@ -18,7 +18,7 @@
         content="https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html">
     <meta property="og:title" content="Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin">
     <meta property="og:description"
-        content="Developer guide to BLE tracking in Laravel using the NativePHP Mobile plugin architecture, Livewire native events, and RSSI proximity detection.">
+        content="A look at BLE tracking in Laravel with the NativePHP Mobile BLE plugin: scanning, connections, native events, platform differences, and testing without hardware.">
     <meta property="og:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -26,7 +26,7 @@
         content="https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html">
     <meta name="twitter:title" content="Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin">
     <meta name="twitter:description"
-        content="Developer guide to BLE tracking in Laravel using the NativePHP Mobile plugin architecture, Livewire native events, and RSSI proximity detection.">
+        content="A look at BLE tracking in Laravel with the NativePHP Mobile BLE plugin: scanning, connections, native events, platform differences, and testing without hardware.">
     <meta name="twitter:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
 
     <meta name="theme-color" content="#f97316">
@@ -39,8 +39,8 @@
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin",
-            "datePublished": "2026-04-29",
-            "dateModified": "2026-04-29",
+            "datePublished": "2026-09-02",
+            "dateModified": "2026-09-02",
             "author": {
                 "@type": "Person",
                 "name": "Sonali Dudhia"
@@ -49,7 +49,7 @@
                 "@type": "Person",
                 "name": "Sonali Dudhia"
             },
-            "description": "Developer guide to BLE tracking in Laravel using the NativePHP Mobile plugin architecture, Livewire native events, and RSSI proximity detection.",
+            "description": "A look at BLE tracking in Laravel with the NativePHP Mobile BLE plugin: scanning, connections, native events, platform differences, and testing without hardware.",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html"
@@ -123,7 +123,7 @@
             <header class="article-header">
                 <p class="blog-kicker">NativePHP Mobile</p>
                 <h1>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin</h1>
-                <p class="post-meta">By Sonali Dudhia • Apr 29, 2026 • 11 min read</p>
+                <p class="post-meta">By Sonali Dudhia • Sep 2, 2026 • 8 min read</p>
                 <div class="post-tag-row">
                     <span class="post-tag">NativePHP</span>
                     <span class="post-tag">Laravel</span>
@@ -134,265 +134,275 @@
 
             <section class="article-body">
                 <p>
-                    Bluetooth Low Energy (BLE) powers everything from smart bands to wireless thermometers, but until
-                    now, accessing it from Laravel felt impossible. Thanks to the BLE Tracking Plugin for NativePHP
-                    Mobile, you can now scan, connect, and track Bluetooth devices right from your PHP and Livewire
-                    code, with no Swift or Kotlin required.
+                    Bluetooth Low Energy powers everything from smart bands to wireless thermometers, but reaching it
+                    from Laravel used to mean writing Swift or Kotlin by hand. The BLE plugin for NativePHP Mobile
+                    closes that gap: your app scans for peripherals, connects to them, and reacts to devices arriving
+                    and leaving, all driven from PHP and Livewire.
+                </p>
+                <p>
+                    One thing to be clear about up front: the plugin tracks <em>presence and connection state</em>. It
+                    is built for knowing which devices are around, how strong their signal is, and whether you are
+                    connected to them. Reading and writing GATT characteristics is not part of it.
                 </p>
 
-                <h2>Why BLE Tracking in NativePHP?</h2>
+                <h2>Why BLE in NativePHP?</h2>
                 <p>
-                    If you have ever tried talking to BLE hardware from a hybrid or web-based stack, you know the
-                    pain. Native APIs differ between iOS and Android, and handling asynchronous events or device
-                    reconnections can get messy quickly.
+                    If you have ever talked to BLE hardware from a hybrid stack, you know the pain. The native APIs
+                    differ between iOS and Android, and asynchronous events, permission prompts, and reconnections get
+                    messy fast. iOS identifies a peripheral one way, Android another. Android treats scanning as a
+                    location capability on older releases. Each platform has its own idea of when a device counts as
+                    gone.
                 </p>
                 <p>
-                    NativePHP's plugin system makes native integration approachable for PHP developers. With this BLE
-                    plugin, sonali/ble-tracking, you can:
+                    NativePHP's plugin system puts a PHP facade and an event bridge over both, so the app code stays
+                    in Laravel. What the plugin gives you:
                 </p>
                 <ul>
-                    <li>Continuously scan for nearby BLE devices.</li>
-                    <li>Connect and disconnect from devices programmatically.</li>
-                    <li>Track signal strength (RSSI) in real time.</li>
-                    <li>Receive Livewire events when devices appear, connect, or disconnect.</li>
-                    <li>Handle iOS-specific system peripherals like Apple Watch or devices paired through Zepp.</li>
+                    <li>Scanning for nearby BLE devices, optionally filtered by service UUID so the radio and the
+                        event stream only carry what you care about.</li>
+                    <li>Connecting and disconnecting on demand, with the outcome delivered as an event.</li>
+                    <li>Signal strength (RSSI) that refreshes as advertisements come in.</li>
+                    <li>Native events when devices are discovered, connect, disconnect, or fail to connect.</li>
+                    <li>Access to system peripherals — devices already connected to the OS by another app, such as a
+                        watch paired to its companion app, which never show up in a scan because they are not
+                        advertising.</li>
+                    <li>Reconnecting to devices by an identifier you stored earlier, without waiting for them to
+                        advertise — the way to restore connections when the app launches.</li>
+                    <li>A fake radio for your test suite, so screens that scan can be tested on CI with no hardware.</li>
                 </ul>
                 <p>
-                    All of it uses familiar Laravel syntax within the same ecosystem as your backend.
+                    Nothing in the API throws. Off-device — in tests, in CI, under <code>php artisan serve</code> —
+                    calls return empty rather than blowing up, so a screen that scans still renders on the desktop.
                 </p>
 
-                <h2>Getting Started</h2>
-                <p>
-                    You need PHP 8.1+ and NativePHP Mobile 3.0+ (with Android 5.0+ or iOS 13+).
-                </p>
-
-                <h2>Install via Composer</h2>
-                <p>Add the repository to your composer.json:</p>
-                <pre><code>{
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../ble-tracking-plugin"
-    }
-  ]
-}</code></pre>
-
-                <p>Then install:</p>
-                <pre><code>composer require sonalidudhia/nativephp-ble-tracking</code></pre>
-
-                <h2>Register the Plugin</h2>
-                <p>Add the service provider to your NativeServiceProvider:</p>
-                <pre><code>public function plugins(): array
-{
-    return [
-        \NativePHP\BLETracking\BLETrackingServiceProvider::class,
-    ];
-}</code></pre>
-
-                <p>Now rebuild for iOS or Android:</p>
-                <pre><code>php artisan native:run android
-# or
-php artisan native:run ios</code></pre>
-
-                <p>And you are live.</p>
-
-                <h2>Scanning for Devices</h2>
-                <p>
-                    The plugin provides a clean API through the BLETracking facade:
-                </p>
-                <pre><code>use NativePHP\BLETracking\Facades\BLETracking;
-
-$scan = BLETracking::startScanning();
-
-if ($scan['success']) {
-    // Listen for DeviceDiscovered events
-}</code></pre>
-
-                <p>Stop scanning with:</p>
-                <pre><code>BLETracking::stopScanning();</code></pre>
-
-                <p>
-                    During scanning, nearby BLE devices trigger events you can catch directly in Livewire.
-                </p>
-
-                <h2>Handling Live Events in Laravel</h2>
-                <p>
-                    Each plugin action fires native events under the hood. In Livewire, you can subscribe using the
-                    OnNative attribute:
-                </p>
-                <pre><code>use Native\Mobile\Attributes\OnNative;
-use NativePHP\BLETracking\Events\DeviceDiscovered;
-
-#[OnNative(DeviceDiscovered::class)]
-public function handleDiscovered(string $deviceId, string $deviceName, int $rssi)
-{
-    $proximity = $rssi &gt;= -60 ? 'Very Close' : ($rssi &gt;= -75 ? 'Nearby' : 'Far');
-    // Update your dashboard UI
-}</code></pre>
-
-                <p>Other available events:</p>
-                <ul>
-                    <li>DeviceConnected</li>
-                    <li>DeviceDisconnected</li>
-                    <li>ConnectionFailed</li>
-                    <li>ScanningStarted</li>
-                    <li>ScanningStopped</li>
-                </ul>
-
-                <h2>RSSI and Proximity Detection</h2>
-                <p>
-                    RSSI (signal strength) gives you an approximate sense of how close a device is.
-                </p>
-                <table class="w-full border-collapse text-left mb-6">
+                <h2>Requirements</h2>
+                <div class="article-table-wrap">
+                <table>
                     <thead>
                         <tr>
-                            <th class="p-2 border-b border-gray-300">RSSI Range</th>
-                            <th class="p-2 border-b border-gray-300">Proximity</th>
+                            <th>Requirement</th>
+                            <th>Version</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">&gt;= -60 dBm</td>
-                            <td class="p-2 border-b border-gray-200">Very Close</td>
+                            <td>PHP</td>
+                            <td>8.2+</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">-61 to -75 dBm</td>
-                            <td class="p-2 border-b border-gray-200">Nearby</td>
+                            <td>NativePHP Mobile</td>
+                            <td>3.0+ or 4.0+</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">&lt; -75 dBm</td>
-                            <td class="p-2 border-b border-gray-200">Far</td>
+                            <td>iOS</td>
+                            <td>18.2+</td>
+                        </tr>
+                        <tr>
+                            <td>Android</td>
+                            <td>8.0+ (API 26+)</td>
                         </tr>
                     </tbody>
                 </table>
+                </div>
+                <p>
+                    Scanning needs real hardware. BLE does not work in the iOS Simulator or the Android emulator, so
+                    plan on testing against a phone — or against the plugin's fake radio.
+                </p>
 
-                <h2>Example: Building a BLE Dashboard in Livewire</h2>
-                <p>Below is a simplified version of the included Livewire component (BleDashboard):</p>
-                <pre><code>class BleDashboard extends Component
+                <h2>Installation, in short</h2>
+                <p>
+                    Install the package with Composer, register it as a NativePHP plugin with an Artisan command, then
+                    rebuild the app so the plugin's Swift and Kotlin are compiled in. That last step matters: BLE is
+                    native code, not something that can be hot-reloaded into a running build.
+                </p>
+
+                <h2>What a device looks like</h2>
+                <p>
+                    Every device the plugin reports carries the same shape: an identifier, a name where the peripheral
+                    advertises one, signal strength in dBm, the service UUIDs it advertises, the manufacturer's
+                    Bluetooth SIG company identifier, whether you are connected to it, and when it was last seen.
+                </p>
+                <p>
+                    Identifiers are the one detail worth internalising. On Android the identifier is a MAC address and
+                    it is stable. On iOS it is a peripheral UUID that is stable per device <em>per app install</em>, so
+                    an identifier saved before a reinstall — or by a different app — will not resolve. If you persist
+                    pairings, expect to re-pair on iOS after a reinstall.
+                </p>
+
+                <h2>Events, and what they promise</h2>
+                <p>
+                    The plugin dispatches native events your Livewire components subscribe to:
+                    <strong>DeviceDiscovered</strong>, <strong>DeviceConnected</strong>,
+                    <strong>DeviceDisconnected</strong>, <strong>ConnectionFailed</strong>,
+                    <strong>ScanningStarted</strong> and <strong>ScanningStopped</strong>.
+                </p>
+                <p>
+                    Listening is ordinary Livewire. The <code>OnNative</code> attribute wires a component method to an
+                    event coming off the native bridge, and the payload arrives as method arguments:
+                </p>
+                <pre><code>use Livewire\Component;
+use Native\Mobile\Attributes\OnNative;
+
+class DeviceList extends Component
 {
     public array $devices = [];
-    public bool $scanning = false;
-
-    public function startScanning()
-    {
-        $this-&gt;scanning = BLETracking::startScanning()['success'];
-    }
 
     #[OnNative(DeviceDiscovered::class)]
-    public function addDevice(string $deviceId, string $deviceName, int $rssi)
+    public function found(string $id, ?string $name = null, ?int $rssi = null): void
     {
-        $this-&gt;devices[$deviceId] = [
-            'name' =&gt; $deviceName,
-            'rssi' =&gt; $rssi,
-            'proximity' =&gt; $this-&gt;getProximity($rssi),
-        ];
+        $this-&gt;devices[$id] = ['name' =&gt; $name, 'rssi' =&gt; $rssi];
     }
 
-    private function getProximity(int $rssi): string
+    #[OnNative(DeviceDisconnected::class)]
+    public function gone(string $id, string $reason = ''): void
     {
-        return $rssi &gt;= -60 ? 'Very Close' : ($rssi &gt;= -75 ? 'Nearby' : 'Far');
+        unset($this-&gt;devices[$id]);
     }
 }</code></pre>
-
                 <p>
-                    Rendered through Blade with wire:poll updates, you get a responsive BLE scanner UI written entirely
-                    in PHP.
+                    Note the nullable arguments on discovery: plenty of peripherals advertise no name, and signal
+                    strength is not always present. Anything that assumes both will bite you on real hardware.
+                </p>
+                <p>Three behaviours are worth knowing before you design a screen around them:</p>
+                <ul>
+                    <li>
+                        Discovery fires <strong>once per device per scan</strong>, not once per advertisement. Later
+                        advertisements refresh the device's signal strength quietly — an event per advertisement would
+                        flood the bridge. A live dashboard therefore reads RSSI from the scanned-device list on a poll,
+                        rather than expecting an event per reading.
+                    </li>
+                    <li>
+                        A scanned device that goes quiet for eight seconds is reported as disconnected with an
+                        out-of-range reason. Connected devices are exempt: they stop advertising by design, and their
+                        departure shows up as the connection itself dropping.
+                    </li>
+                    <li>
+                        A scan that cannot start — Bluetooth off, permission not yet granted — reports a failure and
+                        then a scan-stopped event, rather than silently doing nothing.
+                    </li>
+                </ul>
+                <p>
+                    Connection attempts are asynchronous everywhere. Asking to connect tells you the request was
+                    accepted, not that it succeeded; the result arrives as an event. Neither platform times an attempt
+                    out on its own — iOS keeps retrying until it succeeds or you cancel, and Android surfaces its own
+                    timeout as a failure event.
                 </p>
 
-                <h2>iOS vs Android Behavior</h2>
-                <table class="w-full border-collapse text-left mb-6">
+                <h2>RSSI and proximity</h2>
+                <p>
+                    RSSI gives you a rough sense of how close a device is. It is noisy — bodies, walls and orientation
+                    all move it — so treat it as buckets rather than a distance. These work well enough in practice:
+                </p>
+                <div class="article-table-wrap">
+                <table>
                     <thead>
                         <tr>
-                            <th class="p-2 border-b border-gray-300">Capability</th>
-                            <th class="p-2 border-b border-gray-300">iOS</th>
-                            <th class="p-2 border-b border-gray-300">Android</th>
+                            <th>RSSI Range</th>
+                            <th>Proximity</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">Real-time scanning</td>
-                            <td class="p-2 border-b border-gray-200">Yes</td>
-                            <td class="p-2 border-b border-gray-200">Yes</td>
+                            <td>&gt;= -60 dBm</td>
+                            <td>Very Close</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">reconnectKnownDevices</td>
-                            <td class="p-2 border-b border-gray-200">Yes</td>
-                            <td class="p-2 border-b border-gray-200">No (not supported)</td>
+                            <td>-61 to -75 dBm</td>
+                            <td>Nearby</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border-b border-gray-200">scanSystemPeripherals</td>
-                            <td class="p-2 border-b border-gray-200">Yes</td>
-                            <td class="p-2 border-b border-gray-200">No</td>
-                        </tr>
-                        <tr>
-                            <td class="p-2 border-b border-gray-200">Manufacturer detection (Apple ID 0x004C)</td>
-                            <td class="p-2 border-b border-gray-200">Yes</td>
-                            <td class="p-2 border-b border-gray-200">No</td>
-                        </tr>
-                        <tr>
-                            <td class="p-2 border-b border-gray-200">Async connection flow</td>
-                            <td class="p-2 border-b border-gray-200">Waits for result</td>
-                            <td class="p-2 border-b border-gray-200">Initiates connection and returns immediately</td>
+                            <td>&lt; -75 dBm</td>
+                            <td>Far</td>
                         </tr>
                     </tbody>
                 </table>
+                </div>
 
+                <h2>Permissions</h2>
+                <p>The plugin declares what it needs and the build injects it, so there is no manifest editing on your side.</p>
                 <p>
-                    The iOS side uses CoreBluetooth (CBCentralManager and related APIs), while Android uses
-                    RxAndroidBle for non-blocking BLE streams.
+                    <strong>iOS</strong> contributes a Bluetooth usage description to <code>Info.plist</code> plus the
+                    <code>bluetooth-central</code> background mode, which keeps connections alive when the app is
+                    backgrounded. You can override the usage string with wording specific to your app — the system
+                    shows it verbatim in the permission prompt.
+                </p>
+                <p>
+                    <strong>Android</strong> declares the scan and connect permissions, the legacy Bluetooth
+                    permissions, and fine and coarse location, and requires BLE hardware. Android 12 and up use the two
+                    runtime Bluetooth permissions; earlier versions treat BLE scanning as a location capability, hence
+                    the location entries. The Android prompt is asynchronous, so the first scan request triggers the
+                    permission dialog and the scan starts on the next attempt once the user allows it.
                 </p>
 
-                <h2>Permissions Overview</h2>
+                <h2>Platform differences</h2>
+                <div class="article-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>iOS</th>
+                            <th>Android</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Device identifier</td>
+                            <td>Peripheral UUID, stable per app install</td>
+                            <td>MAC address, stable</td>
+                        </tr>
+                        <tr>
+                            <td>Native framework</td>
+                            <td>CoreBluetooth</td>
+                            <td>RxAndroidBle</td>
+                        </tr>
+                        <tr>
+                            <td>System peripheral lookup</td>
+                            <td>Requires service UUIDs</td>
+                            <td>Service UUIDs optional</td>
+                        </tr>
+                        <tr>
+                            <td>Reconnect by identifier</td>
+                            <td>Supported</td>
+                            <td>Supported</td>
+                        </tr>
+                        <tr>
+                            <td>Permission prompt</td>
+                            <td>On first radio use, from the OS</td>
+                            <td>Requested by the plugin, asynchronous</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h2>Testing without a radio</h2>
                 <p>
-                    NativePHP handles permission prompts for you. Here is what gets requested.
+                    The part I am happiest about. The plugin extends the NativePHP testing suite with BLE helpers, so
+                    a test can stand up a fake radio around a fixed set of devices and then assert against it: that a
+                    scan ran, that it used the service filter you expected, that tapping a device connected to it,
+                    that a screen stopped scanning when it should. No hardware, no bridge internals, and CI stays
+                    green.
                 </p>
-                <p><strong>Android:</strong></p>
+
+                <h2>Under the hood</h2>
                 <ul>
-                    <li>BLUETOOTH, BLUETOOTHADMIN</li>
-                    <li>BLUETOOTHSCAN, BLUETOOTHCONNECT (Android 12+)</li>
-                    <li>ACCESSFINE_LOCATION</li>
-                </ul>
-                <p><strong>iOS:</strong></p>
-                <ul>
-                    <li>NSBluetoothAlwaysUsageDescription</li>
-                    <li>NSBluetoothPeripheralUsageDescription</li>
+                    <li>iOS: Apple's CoreBluetooth framework.</li>
+                    <li>Android: RxAndroidBle on top of RxJava, for non-blocking BLE streams.</li>
+                    <li>Standard NativePHP plugin layout — a manifest declaring bridge functions, permissions and
+                        events, with Kotlin and Swift on one side and a PHP facade on the other.</li>
                 </ul>
 
-                <p>
-                    To scan in the background, enable bluetooth-central mode in Xcode project settings.
-                </p>
-
-                <h2>Under the Hood</h2>
-                <ul>
-                    <li>Android: RxAndroidBle v1.17.2 and RxJava 3.1.8</li>
-                    <li>iOS: Built on Apple's CoreBluetooth framework</li>
-                    <li>License: MIT</li>
-                </ul>
-
-                <p>
-                    The plugin uses the same architecture as official NativePHP packages, combining Kotlin and Swift
-                    layers with a PHP facade and event bridge.
-                </p>
-
-                <h2>What's Next</h2>
-                <p>
-                    I built this plugin to bridge the gap between Laravel and hardware-level BLE access, but this is
-                    only the beginning. Future releases will include:
-                </p>
+                <h2>What's next</h2>
+                <p>Still on the list:</p>
                 <ul>
                     <li>Auto-reconnect for dropped devices.</li>
+                    <li>GATT characteristic reads and writes.</li>
                     <li>Signal strength charting in Livewire.</li>
-                    <li>Optional background scanning.</li>
                 </ul>
 
                 <p>
-                    If you want to explore the source or contribute:
-                    <a href="https://github.com/sonalidudhia/nativephp-ble-tracking" target="_blank" rel="noreferrer">sonalidudhia/nativephp-ble-tracking on GitHub</a>
-                </p>
-
-                <p>
-                    Built with NativePHP Mobile v3. BLE tracking for Laravel, powered by CoreBluetooth and
-                    RxAndroidBle.
+                    The plugin now lives with NativePHP, and ships as part of their mobile plugin range rather than as
+                    a package of mine — availability and pricing are announced on
+                    <a href="https://nativephp.com" target="_blank" rel="noreferrer">nativephp.com</a>.
                 </p>
             </section>
 
