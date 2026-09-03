@@ -124,7 +124,7 @@
             <header class="article-header">
                 <p class="blog-kicker">Laravel x Local AI</p>
                 <h1>I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)</h1>
-                <p class="post-meta">By Sonali Dudhia • September 8, 2026 • 11 min read</p>
+                <p class="post-meta">By Sonali Dudhia • September 8, 2026 • 12 min read</p>
                 <div class="post-tag-row">
                     <span class="post-tag">Laravel</span>
                     <span class="post-tag">Filament</span>
@@ -383,7 +383,7 @@ Rules:
 public function rules(): array
 {
     return [
-        'places' =&gt; ['present', 'array'],
+        'places' =&gt; ['present', 'array', 'min:1'],
         'places.*.name' =&gt; ['required', 'string', 'min:2', 'max:120'],
         'places.*.city' =&gt; ['nullable', 'string', 'max:120'],
         'places.*.category' =&gt; ['required', Rule::in(PlaceListSchema::CATEGORIES)],
@@ -416,6 +416,49 @@ public function rules(): array
                     This logic ended up being generic enough that I am pulling it out into a small package. It has
                     nothing to do with travel, and everything to do with the fact that the gap between "valid JSON"
                     and "usable data" is where most of the work in a local AI pipeline actually sits.
+                </p>
+
+                <h2>🧾 Why Salvaging Needs a Receipt</h2>
+                <p>
+                    Partial salvage is the right behaviour, but on its own it is quietly dishonest. If the pipeline
+                    drops two unusable items, keeps three good ones, and then marks the reel as completed, nothing
+                    downstream can tell a partial extraction apart from a complete one. The reel looks processed. The
+                    two places that never made it are simply absent, and absence is not something a UI can show you.
+                </p>
+                <p>
+                    So the outcome is recorded next to the data it describes. The reel stores how many items were
+                    dropped and the raw model output that produced them, and its status becomes
+                    <code>Partial</code> rather than <code>Completed</code>:
+                </p>
+                <pre><code>$valid = $this-&gt;repairAndValidate($raw);
+
+$reel-&gt;places()-&gt;createMany($valid);
+
+$reel-&gt;update([
+    'status' =&gt; count($valid) === count($raw['places'] ?? [])
+        ? ReelStatus::Completed
+        : ReelStatus::Partial,
+    'dropped_count' =&gt; count($raw['places'] ?? []) - count($valid),
+    'raw_output' =&gt; $raw,
+]);</code></pre>
+                <p>
+                    Keeping the raw output matters more than the counter does. When a reel comes back partial, the
+                    question is always what the model actually said, and reconstructing that from logs after the fact
+                    is miserable. Stored on the record, it is one click away in Filament, and it is what turns a
+                    vague sense that extraction is unreliable into a specific prompt change.
+                </p>
+                <p>
+                    There is a subtler version of the same trap. An empty result is a legitimate answer, because some
+                    reels genuinely contain no specific places. But malformed output often decodes to an empty array
+                    too, which means total failure and a correct "nothing here" produce byte-identical results. The
+                    fix is to stop letting an empty array pass through the same path as a real extraction: the
+                    validation rules require at least one item, so an empty array fails loudly, and the genuine
+                    no-places case is detected before validation and written to the record as its own status.
+                </p>
+                <p>
+                    The general rule I took from this: any pipeline allowed to discard data needs to leave a receipt.
+                    Silent partial success is worse than a visible failure, because a visible failure gets retried
+                    and silent partial success gets trusted.
                 </p>
 
                 <h2>⚙️ The Job Pipeline</h2>
@@ -521,6 +564,56 @@ public function rules(): array
                     entire archive of everything I ever saved.
                 </p>
 
+                <h2>📱 Getting It Out of the App and Onto a Phone</h2>
+                <p>
+                    A list of places is only useful if it is available while standing on a street with one bar of
+                    signal. That means Google Maps, and Google Maps is where the honest part of this section starts.
+                </p>
+                <p>
+                    Google Maps saved lists have no public API. There is no supported endpoint that adds a place to
+                    your starred list or to a custom list, so no application, mine included, can populate that list
+                    for you. Any tutorial suggesting otherwise is describing scraping an authenticated session, which
+                    breaks the first time the markup changes. I did not want a feature whose lifespan was measured in
+                    weeks.
+                </p>
+                <p>
+                    What does work is three exports, each solving a different part of the problem.
+                </p>
+                <p>
+                    The first is a CSV shaped specifically for Google My Maps import. My Maps accepts a spreadsheet,
+                    geocodes rows itself when coordinates are missing, and creates one layer per import, so the export
+                    writes one file per city rather than one file for the trip. Category and must-do travel as
+                    columns, which means styling markers by category is a dropdown choice on the My Maps side rather
+                    than anything my app has to model:
+                </p>
+                <pre><code>Name,Category,City,Country,Latitude,Longitude,Must Do,Description,Tip,Price
+Pastelaria Alcoa,cafe,Lisbon,Portugal,38.7107,-9.1365,yes,Small pastry counter,Ask for the day tray,EUR
+Miradouro da Graca,viewpoint,Lisbon,Portugal,38.7166,-9.1330,no,Terrace over the old town,Go before sunset,Free
+Time Out Market,other,Lisbon,Portugal,38.7071,-9.1459,no,Food hall,Weekday lunch is calmer,EUR EUR</code></pre>
+                <p>
+                    Two details in the writer are worth stating. The file is written with a UTF-8 byte order mark,
+                    because without it accented and non-Latin place names arrive mangled in every spreadsheet tool
+                    that opens the file on the way to My Maps. And rows with no coordinates are still exported, with
+                    the city and country columns populated, because My Maps geocoding from a name plus a city is
+                    better than dropping the row.
+                </p>
+                <p>
+                    The second is a KML export, which is what offline map applications actually want. Coordinates are
+                    already resolved, so this is a straightforward serialisation, and it is the export that works on a
+                    plane.
+                </p>
+                <p>
+                    The third is the one I use most, and it is the smallest. Every place row in the panel has a link
+                    that opens Google Maps directly on that place, using the documented search URL:
+                </p>
+                <pre><code>https://www.google.com/maps/search/?api=1&amp;query=Pastelaria+Alcoa+Lisbon</code></pre>
+                <p>
+                    On a phone, that opens the Maps app on the place itself, and saving it is one tap in the native
+                    interface. It is not automation. It removes the searching, which was the tedious part, and leaves
+                    the saving to the app that owns it. Accepting that boundary produced something that will still
+                    work next year, which the clever version would not have.
+                </p>
+
                 <h2>✂️ The Feature I Cut</h2>
                 <p>
                     I nearly built automatic day-planning. The plan was genuinely quite neat: cluster geocoded places
@@ -557,10 +650,14 @@ public function rules(): array
                     <li>Fix deterministically fixable errors in code before spending another inference call on them.</li>
                     <li>Attach the actual validation messages when re-prompting. Restating the schema is weaker.</li>
                     <li>Salvage valid items instead of failing the batch on one bad row.</li>
+                    <li>Record what was dropped, and mark the record partial. Silent partial success gets trusted.</li>
+                    <li>Do not let an empty result share a code path with a parse failure. They mean opposite things.</li>
                     <li>Make every job stage idempotent so a retry never repeats expensive local inference.</li>
                     <li>Feed the caption to the model alongside the transcript. Names are usually written, not spoken.</li>
                     <li>Give the geocoder a city hint, and keep coordinates nullable rather than blocking on them.</li>
                     <li>Tell the model explicitly that returning nothing is a valid answer.</li>
+                    <li>Write CSV exports with a UTF-8 BOM, or accented place names arrive broken.</li>
+                    <li>When a platform has no API, export into what it does accept instead of scraping it.</li>
                 </ul>
 
                 <h2>💡 Why This Stack Worked</h2>
