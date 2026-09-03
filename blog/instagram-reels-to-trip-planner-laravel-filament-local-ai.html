@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI) | Sonali Dudhia</title>
+
+    <meta name="description"
+        content="How I built a trip planner that turns saved Instagram reels into a structured list of places, using Laravel, a laravel/ai agent on a local Ollama model, and Filament v4 as the entire UI. No API keys.">
+    <meta name="keywords"
+        content="Laravel AI SDK, Ollama Laravel, Filament v4, laravel/ai structured output, local LLM Laravel, self-hosted AI app, Laravel side project, Instagram reels trip planner">
+    <meta name="author" content="Sonali Dudhia">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url"
+        content="https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html">
+    <meta property="og:title" content="I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)">
+    <meta property="og:description"
+        content="Paste a reel link, get the places back: name, category, why it was worth saving. Built with Laravel, a local Ollama model, and Filament v4, running entirely on my own machine.">
+    <meta property="og:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url"
+        content="https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html">
+    <meta name="twitter:title" content="I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)">
+    <meta name="twitter:description"
+        content="Technical notes on structured extraction with a local LLM, repairing model output that is valid JSON but still wrong, and shipping a whole product as a Filament panel.">
+    <meta name="twitter:image" content="https://sonalidudhia.dev/assets/profile.jpeg">
+
+    <meta name="theme-color" content="#f97316">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="canonical"
+        href="https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html">
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)",
+            "datePublished": "2026-09-08",
+            "dateModified": "2026-09-08",
+            "author": {
+                "@type": "Person",
+                "name": "Sonali Dudhia"
+            },
+            "publisher": {
+                "@type": "Person",
+                "name": "Sonali Dudhia"
+            },
+            "description": "How I built a trip planner that turns saved Instagram reels into a structured list of places, using Laravel, a laravel/ai agent on a local Ollama model, and Filament v4 as the entire UI. No API keys.",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html"
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="blog-theme">
+    <div class="top-controls">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+            <svg class="sun-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+            <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+
+        <a href="../index.html" class="blog-btn" aria-label="Back to home">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 10.5L12 3l9 7.5M5 9.2V21h14V9.2"></path>
+            </svg>
+            <span>Home</span>
+        </a>
+
+        <a href="../blog.html" class="blog-btn" aria-label="Back to blog list">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v6h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 13h8M8 17h8"></path>
+            </svg>
+            <span>Blog</span>
+        </a>
+
+        <a href="../about.html" class="blog-btn" aria-label="About me">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>About</span>
+        </a>
+
+        <a href="https://github.com/sonalidudhia/sonalidudhia.dev" target="_blank" class="source-btn"
+            aria-label="View source code on GitHub">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span>GitHub</span>
+        </a>
+    </div>
+
+    <main class="blog-article">
+        <article class="article-shell">
+            <header class="article-header">
+                <p class="blog-kicker">Laravel x Local AI</p>
+                <h1>I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)</h1>
+                <p class="post-meta">By Sonali Dudhia • September 8, 2026 • 11 min read</p>
+                <div class="post-tag-row">
+                    <span class="post-tag">Laravel</span>
+                    <span class="post-tag">Filament</span>
+                    <span class="post-tag">AI</span>
+                    <span class="post-tag">Ollama</span>
+                    <span class="post-tag">Side Project</span>
+                </div>
+            </header>
+
+            <section class="article-body">
+                <h2>🎀 The Spreadsheet Problem</h2>
+                <p>
+                    I travel like a local. I want the neighbourhood bakery, not the postcard thing. And I am an
+                    <strong>Instagram girlie</strong> 💅 — my saved collection is where all of that lives: reels of
+                    tiny food spots, viewpoints nobody queues for, and "do not miss this" tips from people who
+                    actually live there. My saves folder is basically a travel guide written by strangers who love me.
+                </p>
+                <p>
+                    The problem is what comes next. Planning meant opening every saved reel one by one 😵‍💫, typing
+                    place names into a spreadsheet, googling each one to work out where it actually is, and then
+                    trying to shape that mess into an itinerary. Hours of it. For a trip that is supposed to be fun.
+                </p>
+                <p>
+                    So I built the thing I wanted 🛠️. Paste a reel link, get the places back: name, what it is, why
+                    it was worth saving, grouped by country and city, with a switch for the ones I refuse to miss. It
+                    runs entirely on my own machine. No API keys, no subscriptions, nothing sent anywhere. 🔒
+                </p>
+                <p>
+                    It is called <strong>reel2trip</strong>, and it is
+                    <a href="https://github.com/sonalidudhia/reel2trip" target="_blank" rel="noopener">open source on
+                        GitHub</a>. Here is what it looks like end to end:
+                </p>
+
+                <figure class="article-video">
+                    <video controls playsinline preload="metadata" poster="../assets/reel2trip-demo-poster.jpg">
+                        <source src="../assets/reel2trip-demo.mp4" type="video/mp4">
+                        Your browser does not support embedded video.
+                        <a href="https://github.com/sonalidudhia/reel2trip" target="_blank" rel="noopener">View the
+                            demo on GitHub</a> instead.
+                    </video>
+                    <figcaption>Pasting a reel link, watching it process, and getting the places grouped by city.
+                    </figcaption>
+                </figure>
+
+                <h2>✅ What I Wanted It to Do</h2>
+                <p>
+                    Before writing anything, I wrote down the short version of the product:
+                </p>
+                <ul>
+                    <li>📎 Accept an Instagram reel URL and do the rest without further input.</li>
+                    <li>🎧 Read both the spoken audio and the caption, because half the tips live in each.</li>
+                    <li>📋 Return a structured list of places, not a paragraph of prose.</li>
+                    <li>🌍 Resolve each place to a country and city so results can be grouped.</li>
+                    <li>⭐ Let me mark a city as one I am visiting, and a place as a must-do.</li>
+                    <li>💻 Run offline, on my laptop, with no third-party account involved.</li>
+                </ul>
+                <p>
+                    Everything else, including the itinerary generation I originally sketched out, was optional. That
+                    distinction turned out to matter more than I expected.
+                </p>
+
+                <h2>🗺️ High-Level Architecture</h2>
+                <pre><code>Instagram Reel URL
+    |
+    |-- yt-dlp (video file + caption + metadata)
+    v
+Local Whisper
+    |
+    |-- Transcribe audio to text
+    v
+laravel/ai Agent on local Ollama
+    |
+    |-- Structured extraction (places array)
+    |-- Validate + repair + re-prompt
+    v
+Nominatim Geocoding
+    |
+    |-- Resolve country, city, coordinates
+    v
+Filament v4 Panel
+    |
+    |-- Reels, Places, status badges
+    |-- Country -> City -> Places, with toggles</code></pre>
+                <p>
+                    Each arrow in that diagram is a stage of one queued job. That is the whole system. The interesting
+                    parts are the extraction step and what happens when it goes wrong.
+                </p>
+
+                <h2>🔑 Why Zero API Keys</h2>
+                <p>
+                    Running everything locally was a design constraint I set at the start, not a compromise I settled
+                    for later.
+                </p>
+                <p>
+                    The first reason is privacy. My saved collection is a fairly precise map of where I am going, what
+                    I like, and when I will be away from home. That is not data I want sitting in someone else's logs.
+                </p>
+                <p>
+                    The second is cost shape. A hosted model charges per request, and the natural instinct when
+                    processing costs money is to batch carefully and avoid retries. Local inference costs electricity
+                    and time, which means I can re-run extraction on the same reel five times while tuning a prompt
+                    and not think about it once.
+                </p>
+                <p>
+                    The third is distribution. Anyone can clone the repository, run <code>ollama pull</code>, and have
+                    a working app. There is no signup step, no key to provision, and no environment variable that
+                    silently breaks the demo for everyone else.
+                </p>
+                <p>
+                    None of this would have been practical a couple of years ago. Small local models have become good
+                    enough at constrained extraction that a self-hosted pipeline is now a reasonable default for this
+                    class of problem, rather than a purity exercise.
+                </p>
+
+                <h2>🤖 The Extraction Agent</h2>
+                <p>
+                    The extraction step takes two inputs, the transcript and the caption, and returns an array of
+                    place objects. I used an agent class from <code>laravel/ai</code> pointed at a local Ollama model,
+                    with a schema describing the exact shape I expect back.
+                </p>
+                <p>The agent itself stays small. Instructions, model, schema:</p>
+                <pre><code>namespace App\Ai\Agents;
+
+use App\Ai\Schemas\PlaceListSchema;
+
+final class PlaceExtractionAgent extends Agent
+{
+    public function model(): string
+    {
+        return config('trip.extraction_model');
+    }
+
+    public function instructions(): string
+    {
+        return view('ai.prompts.place-extraction')-&gt;render();
+    }
+
+    public function schema(): array
+    {
+        return PlaceListSchema::definition();
+    }
+}</code></pre>
+
+                <p>The schema is where the real specification lives:</p>
+                <pre><code>final class PlaceListSchema
+{
+    public const CATEGORIES = [
+        'restaurant', 'cafe', 'bar', 'viewpoint',
+        'museum', 'shop', 'beach', 'activity', 'other',
+    ];
+
+    public static function definition(): array
+    {
+        return [
+            'type' =&gt; 'object',
+            'properties' =&gt; [
+                'places' =&gt; [
+                    'type' =&gt; 'array',
+                    'items' =&gt; [
+                        'type' =&gt; 'object',
+                        'required' =&gt; ['name', 'category'],
+                        'properties' =&gt; [
+                            'name' =&gt; ['type' =&gt; 'string'],
+                            'city' =&gt; ['type' =&gt; 'string'],
+                            'category' =&gt; ['type' =&gt; 'string', 'enum' =&gt; self::CATEGORIES],
+                            'description' =&gt; ['type' =&gt; 'string'],
+                            'tip' =&gt; ['type' =&gt; 'string'],
+                            'price_hint' =&gt; ['type' =&gt; 'string'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+}</code></pre>
+
+                <p>
+                    Six fields, and each one earns its place. <code>name</code> is what I search for later.
+                    <code>city</code> gives the geocoder a hint so a common restaurant name does not resolve to the
+                    wrong continent. <code>category</code> is a closed enum so filtering stays reliable.
+                    <code>description</code> is one line on what the place is. <code>tip</code> is the part that makes
+                    the whole thing worth building, the specific advice from the reel, such as which dish to order or
+                    what time to arrive. <code>price_hint</code> is free text because reels describe prices in wildly
+                    inconsistent ways.
+                </p>
+                <p>
+                    The system prompt does the work the schema cannot. It defines what counts as a place, and it is
+                    unusually direct about what not to do:
+                </p>
+                <pre><code>You extract places from a short travel video.
+
+You are given a transcript and a caption. Both may be
+incomplete, informal, or in mixed languages.
+
+Rules:
+- Only extract places a traveller could visit. Ignore
+  brands, hotels the creator is sponsored by, and generic
+  advice such as "eat local food".
+- Use the exact name as spoken or written. Do not translate
+  it, expand abbreviations, or correct spelling.
+- If the city is not stated, leave city empty. Never guess.
+- category must be one of the listed values. If none fit,
+  use "other".
+- tip must come from the video. If there is no tip, leave
+  it empty rather than inventing one.
+- Return an empty places array if the video contains no
+  specific places.</code></pre>
+                <p>
+                    "Return an empty array" needs to be said out loud. Without it, a small model asked to extract
+                    places will find places, even in a reel that is just someone narrating a sunset.
+                </p>
+
+                <h2>🫠 What Small Local Models Actually Get Wrong</h2>
+                <p>
+                    This is the section I would have wanted to read before starting.
+                </p>
+                <p>
+                    Structured output constrains the shape of the response, not its sense. Every failure I hit was
+                    syntactically valid JSON that parsed cleanly and was still wrong. The schema said yes. The data
+                    said absolutely not. Three patterns showed up repeatedly:
+                </p>
+                <div class="article-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Failure</th>
+                            <th>What it looks like</th>
+                            <th>Why it happens</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>😶 Empty or placeholder values</td>
+                            <td>A required <code>name</code> comes back as <code>""</code> or "Unknown Restaurant"</td>
+                            <td>The model would rather satisfy the schema than return nothing</td>
+                        </tr>
+                        <tr>
+                            <td>🥴 Near-miss enum values</td>
+                            <td><code>"wiewpoint"</code>, <code>"Viewpoint"</code>, <code>"view point"</code></td>
+                            <td>Enum enforcement varies by model and runtime, so I stopped assuming it</td>
+                        </tr>
+                        <tr>
+                            <td>🎨 Invented categories</td>
+                            <td><code>"streetfood"</code>, <code>"nature"</code> instead of <code>"other"</code></td>
+                            <td>Nothing in the enum fits, and falling back feels like giving up</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                <p>
+                    So I stopped treating extraction as one call and started treating it as a validate-and-repair
+                    loop. Everything the model returns goes through normal Laravel validation first:
+                </p>
+                <pre><code>use Illuminate\Validation\Rule;
+
+public function rules(): array
+{
+    return [
+        'places' =&gt; ['present', 'array'],
+        'places.*.name' =&gt; ['required', 'string', 'min:2', 'max:120'],
+        'places.*.city' =&gt; ['nullable', 'string', 'max:120'],
+        'places.*.category' =&gt; ['required', Rule::in(PlaceListSchema::CATEGORIES)],
+        'places.*.description' =&gt; ['nullable', 'string', 'max:400'],
+        'places.*.tip' =&gt; ['nullable', 'string', 'max:400'],
+        'places.*.price_hint' =&gt; ['nullable', 'string', 'max:60'],
+    ];
+}</code></pre>
+                <p>
+                    The repair strategy has three levels, applied in order.
+                </p>
+                <p>
+                    Level one is deterministic coercion. Anything fixable without a model gets fixed without a model:
+                    trim whitespace, lowercase the category, map a small alias table of known near-misses, and convert
+                    placeholder strings to null. This handles the majority of problems at effectively zero cost.
+                </p>
+                <p>
+                    Level two is a targeted re-prompt. If validation still fails, I send the model its own output back
+                    along with the specific validation messages, and ask it to correct only the invalid entries. The
+                    key detail is that the errors are attached verbatim. A message like "the category field must be
+                    one of restaurant, cafe, bar..." is far more effective than restating the schema in prose.
+                </p>
+                <p>
+                    Level three is partial salvage. If an item still fails after the repair pass, I drop that item and
+                    keep the rest, recording the failure against the reel. A reel that yields four good places and one
+                    unusable fragment should give me four places, not an exception. Failing the whole batch over one
+                    bad row is the behaviour that makes local models feel unusable, and it is entirely avoidable.
+                </p>
+                <p>
+                    This logic ended up being generic enough that I am pulling it out into a small package. It has
+                    nothing to do with travel, and everything to do with the fact that the gap between "valid JSON"
+                    and "usable data" is where most of the work in a local AI pipeline actually sits.
+                </p>
+
+                <h2>⚙️ The Job Pipeline</h2>
+                <p>
+                    Downloading a video, transcribing it, and running local inference are all slow and all fail for
+                    different reasons. Instagram rate limits. Whisper occasionally chokes on a file. The model is
+                    simply not fast.
+                </p>
+                <p>
+                    Because of that, the processing job is written as a sequence of idempotent stages, each of which
+                    checks whether its work is already done before doing it. A retry after a rate limit resumes where
+                    it stopped instead of paying for the expensive local inference twice.
+                </p>
+                <pre><code>public function handle(
+    ReelDownloader $downloader,
+    Transcriber $transcriber,
+    PlaceExtractor $extractor,
+    Geocoder $geocoder,
+): void {
+    $reel = $this-&gt;reel-&gt;fresh();
+
+    if (! $reel-&gt;media_path) {
+        $reel-&gt;update($downloader-&gt;fetch($reel-&gt;url));
+    }
+
+    if (! $reel-&gt;transcript) {
+        $reel-&gt;update([
+            'transcript' =&gt; $transcriber-&gt;transcribe($reel-&gt;media_path),
+        ]);
+    }
+
+    if ($reel-&gt;places()-&gt;doesntExist()) {
+        $extractor-&gt;extract($reel);
+    }
+
+    $geocoder-&gt;resolvePending($reel);
+
+    $reel-&gt;update(['status' =&gt; ReelStatus::Completed]);
+}</code></pre>
+                <p>
+                    The job is configured with a small number of tries, a backoff, and a
+                    <code>WithoutOverlapping</code> middleware keyed on the reel ID, so the same reel can never be
+                    processed twice concurrently. Geocoding is its own method because Nominatim asks for a request
+                    rate limit, and <code>resolvePending()</code> only touches places that do not have coordinates
+                    yet.
+                </p>
+                <p>
+                    Writing stages this way costs a few extra conditionals and removes an entire category of problem.
+                    A failed run is never destructive, so retrying is always safe.
+                </p>
+
+                <h2>🖥️ Filament v4 as the Whole UI</h2>
+                <p>
+                    There is no separate frontend. The Filament panel <em>is</em> the product. 😌
+                </p>
+                <p>
+                    That decision saved weeks. I did not build authentication, a table component, a form layout, a
+                    notification system, or a dark mode. I built two resources and one custom page, and the rest came
+                    with the panel.
+                </p>
+                <p>
+                    The Reels resource is where links go in and progress comes back. The status column is a badge, and
+                    the table polls so a reel moves from pending to completed while I am looking at it:
+                </p>
+                <pre><code>public function table(Table $table): Table
+{
+    return $table
+        -&gt;poll('5s')
+        -&gt;columns([
+            TextColumn::make('url')-&gt;limit(50)-&gt;label('Reel'),
+            TextColumn::make('status')
+                -&gt;badge()
+                -&gt;color(fn (ReelStatus $state) =&gt; match ($state) {
+                    ReelStatus::Pending =&gt; 'gray',
+                    ReelStatus::Processing =&gt; 'warning',
+                    ReelStatus::Completed =&gt; 'success',
+                    ReelStatus::Failed =&gt; 'danger',
+                }),
+            TextColumn::make('places_count')-&gt;counts('places')-&gt;label('Places'),
+            TextColumn::make('created_at')-&gt;since()-&gt;label('Added'),
+        ])
+        -&gt;recordActions([
+            Action::make('reprocess')
+                -&gt;requiresConfirmation()
+                -&gt;action(fn (Reel $record) =&gt; ProcessReel::dispatch($record)),
+        ]);
+}</code></pre>
+                <p>
+                    A five second poll on a table with a handful of rows is not a performance concern, and it removes
+                    the need for any realtime infrastructure. The reprocess action exists because prompt changes are
+                    frequent and re-running one reel should be a single click.
+                </p>
+                <p>
+                    The Places resource handles everything after extraction: editing a name the model transcribed
+                    oddly, correcting a category, or deleting something that was never a place to begin with. It is a
+                    standard Filament resource, which is the point.
+                </p>
+                <p>
+                    The page I actually use is a custom one. Places are grouped country to city to place. Each city
+                    has a "visiting" toggle, each place has a "must-do" toggle, and both write straight to the
+                    database through Filament's built-in state handling. Countries with nothing marked as visiting
+                    collapse out of the way, so what remains on screen is the trip I am planning rather than the
+                    entire archive of everything I ever saved.
+                </p>
+
+                <h2>✂️ The Feature I Cut</h2>
+                <p>
+                    I nearly built automatic day-planning. The plan was genuinely quite neat: cluster geocoded places
+                    by distance, assign one cluster per day, order each day to minimise walking, and hand over a
+                    finished itinerary. I had the clustering half-written before I stopped.
+                </p>
+                <p>
+                    What stopped me was thinking about an actual trip. Real trips have internal flights that eat a
+                    morning. Car days where distance stops mattering. Places that only open on certain days.
+                    Reservations booked months ahead that anchor an entire evening. Nights that end late enough to
+                    make the next morning theoretical. The algorithm does not know I will be hungover. 🍷
+                </p>
+                <p>
+                    The algorithm would have had an opinion about all of that, and its opinion would have been wrong
+                    on day one. Then I would have spent my evening fighting the planner instead of planning. The
+                    honest version is that I wanted to build the clustering because clustering is fun to build, which
+                    is a reason to build something, but not a reason to ship it.
+                </p>
+                <p>
+                    So I shipped a list with toggles. It knows nothing about my schedule, which is exactly why it
+                    never gets my schedule wrong. Every real constraint lives in my head or in a booking
+                    confirmation, and the tool's job is to make sure I have the right options in front of me when I
+                    apply them. Constraint-free tooling beat the clever algorithm because the clever algorithm needed
+                    to model a world it had no access to.
+                </p>
+                <p>
+                    There is a version of this feature I would build later, and it is much smaller: a "places near
+                    here" filter that answers a question I ask, rather than a planner that makes a decision for me.
+                </p>
+
+                <h2>📌 Things That Mattered</h2>
+                <ul>
+                    <li>Treat structured output as a shape guarantee only. Validate the meaning separately.</li>
+                    <li>Fix deterministically fixable errors in code before spending another inference call on them.</li>
+                    <li>Attach the actual validation messages when re-prompting. Restating the schema is weaker.</li>
+                    <li>Salvage valid items instead of failing the batch on one bad row.</li>
+                    <li>Make every job stage idempotent so a retry never repeats expensive local inference.</li>
+                    <li>Feed the caption to the model alongside the transcript. Names are usually written, not spoken.</li>
+                    <li>Give the geocoder a city hint, and keep coordinates nullable rather than blocking on them.</li>
+                    <li>Tell the model explicitly that returning nothing is a valid answer.</li>
+                </ul>
+
+                <h2>💡 Why This Stack Worked</h2>
+                <p>
+                    Laravel handled the parts of an AI application that are not really about AI: queueing slow work,
+                    retrying it safely, validating untrusted input, and persisting results. Model output is untrusted
+                    input, and the framework already had the right tools for it.
+                </p>
+                <p>
+                    Ollama made local inference an implementation detail. Swapping models during development was a
+                    config change, which meant I could compare a smaller and larger model on the same reel without
+                    touching application code.
+                </p>
+                <p>
+                    Filament removed the frontend entirely. For a tool with one user, the admin panel is not a
+                    stand-in for the product, it is the product, and building it that way is what let a side project
+                    reach the point of being genuinely useful instead of stalling at eighty percent.
+                </p>
+
+                <h2>🌸 Final Thoughts</h2>
+                <p>
+                    The test I set was simple: could it plan a real trip. It did. 🎉 I pasted in a collection of
+                    saved reels, got back a grouped list of places with the tips still attached, marked the cities I
+                    was going to and the handful of places I was not willing to miss, and used that list on the
+                    ground. The spreadsheet never happened. 📊🚫
+                </p>
+                <p>
+                    What I did not expect was how much of the work was ordinary application engineering. The model is
+                    one call in the middle of a pipeline. The rest is validation, retries, idempotency, and a UI that
+                    respects the fact that the extraction will sometimes be wrong.
+                </p>
+                <p>
+                    The repository is public and MIT licensed. Clone it, pull a model, and it runs on your machine
+                    with nothing to sign up for. If you build something on top of the extraction and repair layer, I
+                    would like to hear about it. 🎀
+                </p>
+
+                <a href="https://github.com/sonalidudhia/reel2trip" class="repo-card" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    <span class="repo-card-body">
+                        <span class="repo-card-name">sonalidudhia / reel2trip</span>
+                        <span class="repo-card-desc">Laravel 12 · Filament v4 · Ollama · MIT licensed</span>
+                    </span>
+                    <span class="repo-card-arrow" aria-hidden="true">→</span>
+                </a>
+            </section>
+        </article>
+    </main>
+
+    <script src="../script.js"></script>
+    <script data-goatcounter="https://sonalidudhia.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+
+</html>

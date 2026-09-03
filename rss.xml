@@ -8,6 +8,16 @@
     <lastBuildDate>Wed, 02 Sep 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://sonalidudhia.dev/rss.xml" rel="self" type="application/rss+xml" />
 
+    <!-- Hidden until the reel2trip post is live.
+    <item>
+      <title>I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)</title>
+      <link>https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html</link>
+      <guid>https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html</guid>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Turning saved Instagram reels into a structured list of places with Laravel, a laravel/ai agent on local Ollama, and Filament v4 as the whole UI.</description>
+    </item>
+    -->
+
     <item>
       <title>Powering Real-Time Bluetooth Tracking in Laravel with the NativePHP BLE Plugin</title>
       <link>https://sonalidudhia.dev/blog/powering-real-time-bluetooth-tracking-nativephp-ble-plugin.html</link>

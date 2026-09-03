@@ -36,4 +36,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- Hidden until the reel2trip post is live.
+  <url>
+    <loc>https://sonalidudhia.dev/blog/instagram-reels-to-trip-planner-laravel-filament-local-ai.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  -->
 </urlset>
