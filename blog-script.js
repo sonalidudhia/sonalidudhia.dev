@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const [featured, ...rest] = posts;
+  const [featured] = posts;
 
   spotlightEl.innerHTML = createPostCard(featured, true);
 
-  const listing = rest.length ? rest : [featured];
-  listEl.innerHTML = listing.map((post) => createPostCard(post, false)).join("");
+  // The list shows every post, including the spotlighted one.
+  listEl.innerHTML = posts.map((post) => createPostCard(post, false)).join("");
 });
 
 function createPostCard(post, isFeatured) {
