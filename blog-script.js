@@ -4,25 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const listEl = document.getElementById("post-list");
-  const spotlightEl = document.getElementById("spotlight-post");
 
-  if (!listEl || !spotlightEl) return;
+  if (!listEl) return;
 
   if (!posts.length) {
     listEl.innerHTML = "<p class='post-card'>No blog posts yet. Check back soon.</p>";
-    spotlightEl.innerHTML = "<p class='post-card'>No spotlight post available yet.</p>";
     return;
   }
 
-  const [featured] = posts;
-
-  spotlightEl.innerHTML = createPostCard(featured, true);
-
-  // The list shows every post, including the spotlighted one.
-  listEl.innerHTML = posts.map((post) => createPostCard(post, false)).join("");
+  listEl.innerHTML = posts.map((post) => createPostCard(post)).join("");
 });
 
-function createPostCard(post, isFeatured) {
+function createPostCard(post) {
   const date = new Date(post.publishedAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -40,7 +33,7 @@ function createPostCard(post, isFeatured) {
 
   return `
     <a class=\"post-card\" href=\"${path}\" aria-label=\"Read post: ${title}\">
-      <div class=\"post-meta\">${date} • ${readTime}${isFeatured ? " • Featured" : ""}</div>
+      <div class=\"post-meta\">${date} • ${readTime}</div>
       <h3>${title}</h3>
       <p>${excerpt}</p>
       <div class=\"post-tag-row\">${tags}</div>
