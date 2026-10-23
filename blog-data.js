@@ -2,6 +2,16 @@
 // Keep date format as YYYY-MM-DD for stable sorting.
 window.BLOG_POSTS = [
   {
+    slug: "shopify-markets-shipping-shipping-profiles-july-2027",
+    title: "Shopify Is Moving Shipping to Markets by July 2027: What Changes for Your Shipping Profiles",
+    excerpt:
+      "Shopify is replacing shipping profiles with market-driven shipping. The key dates, what moves where, and a practical checklist for switching your store safely.",
+    publishedAt: "2026-10-23",
+    readTime: "8 min read",
+    tags: ["Shopify", "Shipping", "Markets", "Migration"],
+    path: "blog/shopify-markets-shipping-shipping-profiles-july-2027.html"
+  },
+  {
     slug: "instagram-reels-to-trip-planner-laravel-filament-local-ai",
     title: "I Turned My Instagram Saves Into a Trip Planner (Laravel + Filament + Local AI)",
     excerpt:

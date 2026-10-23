@@ -5,8 +5,16 @@
     <link>https://sonalidudhia.dev/blog.html</link>
     <description>Practical backend, Laravel, and web architecture notes.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Sep 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://sonalidudhia.dev/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Shopify Is Moving Shipping to Markets by July 2027: What Changes for Your Shipping Profiles</title>
+      <link>https://sonalidudhia.dev/blog/shopify-markets-shipping-shipping-profiles-july-2027.html</link>
+      <guid>https://sonalidudhia.dev/blog/shopify-markets-shipping-shipping-profiles-july-2027.html</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Shopify is replacing shipping profiles with market-driven shipping by 1 July 2027. Key dates, what moves where, and a checklist for switching safely.</description>
+    </item>
 
     <!-- Hidden until the reel2trip post is live.
     <item>
